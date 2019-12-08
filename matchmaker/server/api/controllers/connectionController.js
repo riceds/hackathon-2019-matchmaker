@@ -48,8 +48,36 @@ exports.get_current_connection = function(req, res) {
 };
 
 exports.disconnect = function(req, res) {
-    
+    if (req.body.playerId != null && req.body.playerId !== '') {
+        closeConnection(req, res);
+    } else {
+        var response = {};
+        response['success'] = false;
+        response['errorMessage'] = 'Player Id has no open connections.';
+        res.json(response);
+    }
 };
+
+function closeConnection(req, res) {
+    console.log('closing connection per request: ', req.body);
+    Connection.updateOne({
+        $and: [
+            { $or: [{ player1Id: req.body.playerId }, { player2Id: req.body.playerId }] },
+            { $or: [{ status : 'pending' }, { status : 'open' }]}
+        ]
+    }, { 
+        status : 'closed'
+    }, function(err, updatedConnection) {
+        if (err) {
+            console.log('Error closing connection: ', err);
+        }
+        console.log('updatedConnection: ', updatedConnection);
+        var response = {};
+        response['success'] = true;
+        response['errorMessage'] = '';
+        res.json(response)
+    });
+}
 
 function checkForOpenOrPendingConnection(req, res, playerId) {
     console.log('looking for a matching open or pending connection');
