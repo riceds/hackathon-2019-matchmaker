@@ -7,15 +7,30 @@ var BattleSchema = new Schema({
         type: String
     },
     player1Move: {
-        type: [{
-          type: String,
-          enum: ['rock', 'paper', 'scissor']
-        }]
+        type: String
     },
     player2Move: {
-        type: String,
-        enum: ['rock', 'paper', 'scissor']
+        type: String
+    },
+    status: {
+        type: String
     }
 });
 
 module.exports = mongoose.model('Battle', BattleSchema);
+// player1Move: {
+//     type: [{
+//       type: String,
+//       enum: ['rock', 'paper', 'scissor', '']
+//     }]
+// },
+// player2Move: {
+//     type: String,
+//     enum: ['rock', 'paper', 'scissor', '']
+// },
+// status: {
+//     type: [{
+//       type: String,
+//       enum: ['closed', 'pending']
+//     }]
+// }

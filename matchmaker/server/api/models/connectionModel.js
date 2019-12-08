@@ -11,17 +11,31 @@ var ConnectionSchema = new Schema({
     default: 'None'
   },
   status: {
-    type: [{
-      type: String,
-      enum: ['open', 'closed', 'pending']
-    }]
+    type: String
   },
   type: {
-    type: [{
-      type: String,
-      enum: ['play', 'battle']
-    }]
+    type: String
   }
 });
 
 module.exports = mongoose.model('Connection', ConnectionSchema);
+
+// player1Id: {
+//   type: String
+// },
+// player2Id: {
+//   type: String,
+//   default: 'None'
+// },
+// status: {
+//   type: [{
+//     type: String,
+//     enum: ['open', 'closed', 'pending']
+//   }]
+// },
+// type: {
+//   type: [{
+//     type: String,
+//     enum: ['play', 'battle']
+//   }]
+// }

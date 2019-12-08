@@ -58,6 +58,25 @@ exports.disconnect = function(req, res) {
     }
 };
 
+exports.getOpenBattleConnectionForPlayerId = function(playerId, completion) {
+    console.log('finding open battle connection for: ', playerId);
+    Connection.findOne( {
+        $and: [
+            { $or: [{player1Id:  playerId}, {player2Id: playerId}] },
+            { status : 'open' },
+            { type : 'battle' }
+        ]
+    }, function(err, connection) {
+        if (err) {
+            console.log('Error finding open battle connection.');
+            console.log(err);
+        } else {
+            console.log('found open battle connection: ', connection);
+            completion(connection);
+        }
+    });
+}
+
 function closeConnection(req, res) {
     console.log('closing connection per request: ', req.body);
     Connection.updateOne({
@@ -95,7 +114,7 @@ function checkForOpenOrPendingConnection(req, res, playerId) {
         if (updatedConnection.nModified > 0) {
             Connection.findOne( {
                 $and: [
-                    { $and: [{player1Id: { $ne : playerId}}, {player2Id: playerId}] },
+                    { player2Id: playerId },
                     { status : 'open' },
                     { type : req.body.type }
                 ]

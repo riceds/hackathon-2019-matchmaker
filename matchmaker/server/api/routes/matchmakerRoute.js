@@ -11,8 +11,10 @@ module.exports = function(app) {
     .post(connectionController.disconnect);
 
   app.route('/battle')
-    .get(battleController.get_battle_status)
     .post(battleController.make_move);
+
+  app.route('/battleSearch')
+    .post(battleController.get_battle_status);
 
   app.route('/result')
     .get(playerController.get_streak)
