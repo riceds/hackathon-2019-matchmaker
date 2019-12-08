@@ -65,9 +65,102 @@ exports.get_leaders = function(req, res) {
 };
 
 exports.update_streak = function(req, res) {
-    
+    console.log('Updating streak for player with request: ', req.body);
+    if (req.body.playerId == null || req.body.playerId === '') {
+        returnError(res, 'A playerId needs to be sent in order to log results.');
+    } else if (req.body.result == null || req.body.result === '') {
+        returnError(res, 'A result needs to be sent in order to log results. Valid values are "win", "lose", or "draw"');
+    } else {
+      // get the player
+      getPlayerById(req.body.playerId, function(player) {
+        // if result was a tie, return current streak
+        if (req.body.result === 'draw') {
+          returnStreak(res, player);
+        } else if (req.body.result === 'loss') {
+          // if result was a loss, set streak to 0 and return streak
+          Player.updateOne({
+            playerId : player.playerId
+          }, {
+            activeStreak : 0
+          }, function(err, updatedPlayer)  {
+            if (err) {
+                console.error(err);
+            } else {
+              getPlayerById(player.playerId, function(player) {
+                returnStreak(res, player);
+              });
+            }
+          });
+        } else {
+          // if result was a win, check if we should update both active and high score, or just active
+          var shouldUpdateHighScore = false;
+          var newScore = player.activeStreak + 1;
+          if (player.highStreak == null || newScore > player.highStreak) {
+            shouldUpdateHighScore = true;
+          }
+          
+          if (shouldUpdateHighScore) {
+            // Updating both high streak and active streak
+            console.log('updating active and high streaks');
+            Player.updateOne({
+              playerId : player.playerId
+            }, {
+              activeStreak : newScore,
+              highStreak : newScore
+            }, function(err, updatedPlayer)  {
+              if (err) {
+                  console.error(err);
+              } else {
+                getPlayerById(player.playerId, function(player) {
+                  returnStreak(res, player);
+                });
+              }
+            });
+          } else {
+            // Updating just active streak
+            console.log('updating active streak');
+            Player.updateOne({
+              playerId : player.playerId
+            }, {
+              activeStreak : newScore
+            }, function(err, updatedPlayer)  {
+              if (err) {
+                  console.error(err);
+              } else {
+                getPlayerById(player.playerId, function(player) {
+                  returnStreak(res, player);
+                });
+              }
+            });
+          }
+        }
+      });
+    }
 };
 
 exports.get_streak = function(req, res) {
-    
+  console.log('Getting current streak for player with request: ', req.body);
+  if (req.body.playerId == null || req.body.playerId === '') {
+    returnError(res, 'A playerId needs to be sent in order get current streak.');
+  } else {
+    getPlayerById(req.body.playerId, function(player) {
+      returnStreak(res, player);
+    });
+  }
 };
+
+function returnStreak(res, player) {
+  var response = {};
+  response.playerId = player.playerId;
+  response.streak = player.activeStreak;
+  response.success = true;
+  response.errorMessage = '';
+  res.json(response);
+}
+
+function returnError(res, errorMessage) {
+  var response = {};
+  response.success = false;
+  response.errorMessage = errorMessage;
+  res.json(response);
+}

@@ -17,8 +17,10 @@ module.exports = function(app) {
     .post(battleController.get_battle_status);
 
   app.route('/result')
-    .get(playerController.get_streak)
     .post(playerController.update_streak);
+
+  app.route('/resultSearch')
+    .post(playerController.get_streak)
 
   app.route('/leaderboard')
     .get(playerController.get_leaders);

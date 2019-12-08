@@ -10,10 +10,12 @@ var PlayerSchema = new Schema({
         type: String
     },
     activeStreak: {
-        type: Number
+        type: Number,
+        default: 0
     },
     highStreak: {
-        type: Number
+        type: Number,
+        default: 0
     },
     matchId: {
         type: String
