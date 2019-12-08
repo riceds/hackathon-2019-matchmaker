@@ -171,6 +171,9 @@ exports.get_streak = function(req, res) {
     returnError(res, 'A playerId needs to be sent in order get current streak.');
   } else {
     getPlayerById(req.body.playerId, function(player) {
+      if (player == null) {
+        returnError(res, 'That playerId doesn\'t exist!');
+      }
       returnStreak(res, player);
     });
   }
