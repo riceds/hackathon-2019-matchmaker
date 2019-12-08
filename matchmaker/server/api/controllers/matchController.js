@@ -2,8 +2,7 @@
 var mongoose = require('mongoose'),
 Match = mongoose.model('Match');
 
-
-exports.getMatchById = function (matchId, completion) {
+function getMatchById(matchId, completion) {
     Match.findOne( {
         'matchId' : matchId
     }, function(err, match) {
@@ -15,32 +14,47 @@ exports.getMatchById = function (matchId, completion) {
     });
 }
 
-// exports.list_current_match = function(req, res) {
-//     Connection.find({'player1': req.playerId}, function(err, match) {
-//     if (err) {
-//         res.send(err);
-//     } else {
-//         res.json(match);
-//     }
-//   });
-// };
+exports.getMatchById = function (matchId, completion) {
+    getMatchById(matchId, completion);
+}
 
-// exports.find_match = function(req, res) {
-//     var foundMatch = false;
-//     Connection.findOne({'player2': 'None'}, function(err, match) {
-//         foundMatch = true;
-//         res.json(match);
-//     });
+exports.updateMatch = function (matchId, match, completion) {
+    console.log('updating match: ', matchId);
+    Match.updateOne({
+        matchId : matchId
+    }, {
+        fireStyle : match.fireStyle
+        , costume : match.costume
+        , strength : match.strength
+        , hunger : match.hunger
+        , happiness : match.happiness
+    }, function(err, updatedMatch)  {
+        if (err) {
+            console.error(err);
+            console.log(err);
+        } else {
+            getMatchById(matchId, completion);
+        }
+    });
+}
 
-//     if (!foundMatch) {
-//         var newConnection = new Connection();
-//         newConnection['player1'] = req.playerId;
-//         newConnection.save(function(err, match) {
-//             if (err) {
-//                 res.send(err);
-//             } else {
-//                 res.json(match);
-//             }
-//       });
-//     }
-// };
+exports.insertMatch = function (playerId, match, completion) {
+    console.log('inserting match: ' + match);
+    var newMatch = new Match();
+    var id = playerId + '_' + Math.random().toString(36).substr(2, 9);
+    newMatch['matchId'] = id;
+    newMatch['fireStyle'] = match.fireStyle;
+    newMatch['costume'] = match.costume;
+    newMatch['strength'] = match.strength;
+    newMatch['hunger'] = match.hunger;
+    newMatch['happiness'] = match.happiness;
+    newMatch.save(function(err, match) {
+      if (err) {
+          console.error(err);
+          console.log(err);
+      } else {
+        console.log('inserted match: ', match);
+        completion(match);
+      }
+    });
+}

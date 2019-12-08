@@ -40,9 +40,9 @@ exports.get_current_connection = function(req, res) {
         }
 
         if (player != null) {
-            playerController.updatePlayer(player, req.body.displayName, continueConnection);
+            playerController.updatePlayer(player, req.body, continueConnection);
         } else {
-            playerController.insertPlayer(playerId, req.body.displayName, continueConnection);
+            playerController.insertPlayer(playerId, req.body, continueConnection);
         }
     });
 };

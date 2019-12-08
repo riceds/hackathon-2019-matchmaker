@@ -22,35 +22,41 @@ exports.getPlayerById = function(searchId, completion) {
   getPlayerById(searchId, completion);
 }
 
-exports.updatePlayer = function(player, newDisplayName, completion) {
+exports.updatePlayer = function(player, body, completion) {
   console.log('updating player: ', player);
-  Player.updateOne({
-    playerId : player.playerId
-  }, {
-    displayName : newDisplayName 
-  }, function(err, updatedPlayer)  {
-    if (err) {
-        console.error(err);
-        console.log(err);
-    } else {
-      getPlayerById(player.playerId, completion);
-    }
+  matchController.updateMatch(player.matchId, body.match, function(match) {
+    Player.updateOne({
+      playerId : player.playerId
+    }, {
+      displayName : body.displayName 
+    }, function(err, updatedPlayer)  {
+      if (err) {
+          console.error(err);
+          console.log(err);
+      } else {
+        getPlayerById(player.playerId, completion);
+      }
+    });
   });
 }
 
-exports.insertPlayer = function(playerId, displayName, completion) {
-  console.log('inserting player: ', playerId, ' name: ', displayName);
-  var newPlayer = new Player();
-  newPlayer['playerId'] = playerId;
-  newPlayer['displayName'] = displayName;
-  newPlayer.save(function(err, player) {
-    if (err) {
-        console.error(err);
-        console.log(err);
-    } else {
-      console.log('inserted player: ', player);
-      completion(player);
-    }
+exports.insertPlayer = function(playerId, body, completion) {
+  console.log('inserting player: ', playerId, ' body: ', body);
+
+  matchController.insertMatch(playerId, body.match, function(match) {
+    var newPlayer = new Player();
+    newPlayer['playerId'] = playerId;
+    newPlayer['displayName'] = body.displayName;
+    newPlayer['matchId'] = match.matchId;
+    newPlayer.save(function(err, player) {
+      if (err) {
+          console.error(err);
+          console.log(err);
+      } else {
+        console.log('inserted player: ', player);
+        completion(player);
+      }
+    });
   });
 }
 

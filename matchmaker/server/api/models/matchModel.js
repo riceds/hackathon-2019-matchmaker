@@ -6,22 +6,19 @@ var MatchSchema = new Schema({
     matchId: {
         type: String
     },
-    playerId: {
-        type: String
-    },
-    FireStyle: {
+    fireStyle: {
         type: Number
     },
-    Costume: {
+    costume: {
         type: Number
     },
-    Strength: {
+    strength: {
         type: Number
     },
-    Hunger: {
+    hunger: {
         type: Number
     },
-    Happiness: {
+    happiness: {
         type: Number
     }
 });
