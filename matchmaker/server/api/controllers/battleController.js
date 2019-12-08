@@ -79,6 +79,8 @@ exports.make_move = function(req, res) {
 
                         response.status = battle.status;
                         response.battleId = battle._id;
+                        response.success = true;
+                        response.errorMessage = '';
                         res.json(response);
                     } 
 

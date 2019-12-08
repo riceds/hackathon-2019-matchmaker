@@ -181,6 +181,8 @@ function buildResponse(connection, playerId, req, res) {
     response['matchedPlayerId'] = '';
     response['matchedPlayerName'] = '';
     response['matchedMatch'] = '';
+    response.success = true;
+    response.errorMessage = '';
     if (matchedPlayerId !== '' && matchedPlayerId !== 'None' && matchedPlayerId != null) {
         // query matched player
         playerController.getPlayerById(matchedPlayerId, function(matchedPlayer) {
