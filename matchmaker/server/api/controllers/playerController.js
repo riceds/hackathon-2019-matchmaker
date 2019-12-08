@@ -61,7 +61,34 @@ exports.insertPlayer = function(playerId, body, completion) {
 }
 
 exports.get_leaders = function(req, res) {
-    
+  console.log('getting leaderboard!');
+  Player.find({})
+    .sort({highStreak: -1})
+    .limit(5)
+    .exec( 
+      function(err, players) {
+        var response = {};
+        if (err) {
+          response.success = true;
+          response.errorMessage = err;
+        } else {
+          console.log('found players! ', players);
+          var playerIdsAndScores = [];
+  
+          players.forEach(player => {
+            var playerIdAndScore = {};
+            playerIdAndScore['playerId'] = player.playerId;
+            playerIdAndScore['playerName'] = player.displayName;
+            playerIdAndScore['streak'] = player.highStreak;
+            playerIdsAndScores.push(playerIdAndScore);
+          });
+          response.success = true;
+          response.errorMessage = '';
+          response.leaders = playerIdsAndScores;
+        }
+        res.json(response);
+      }
+    );
 };
 
 exports.update_streak = function(req, res) {
