@@ -5,7 +5,7 @@ module.exports = function(app) {
     var playerController = require('../controllers/playerController');
 
   app.route('/connect')
-    .get(connectionController.get_current_connection);
+    .post(connectionController.get_current_connection);
 
   app.route('/disconnect')
     .post(connectionController.disconnect);

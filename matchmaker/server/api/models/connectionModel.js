@@ -13,9 +13,8 @@ var ConnectionSchema = new Schema({
   status: {
     type: [{
       type: String,
-      enum: ['open', 'close']
-    }],
-    default: ['open']
+      enum: ['open', 'close', 'pending']
+    }]
   },
   type: {
     type: [{
